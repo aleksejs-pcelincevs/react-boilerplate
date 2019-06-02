@@ -1,0 +1,19 @@
+steps:
+- name: gcr.io/cloud-builders/gcloud
+  args:
+  - kms
+  - decrypt
+  - --ciphertext-file=.env.enc
+  - --plaintext-file=.env
+  - --location=global
+  - --keyring=[*****KEYRING_NAME*****]
+  - --key=[*****KEY_NAME*****]
+- name: 'gcr.io/cloud-builders/yarn'
+  args: ['install', '--production']
+- name: 'gcr.io/cloud-builders/yarn'
+  args: ['run', 'build:prod']
+  env:
+  - 'NODE_ENV=production'
+- name: 'gcr.io/cloud-builders/gcloud'
+  args: ['app', 'deploy']
+timeout: '1600s'
